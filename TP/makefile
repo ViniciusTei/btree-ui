@@ -20,7 +20,7 @@ GTKLIB=`pkg-config --cflags --libs gtk+-3.0`
 LD=gcc
 LDFLAGS=$(PTHREAD) $(GTKLIB) -export-dynamic
  
-OBJS=    main.o arvore.o
+OBJS=    main.o arvore.o renderer.o
  
 all: $(OBJS)
 	$(LD) -o $(TARGET) $(OBJS) $(LDFLAGS)
@@ -28,6 +28,9 @@ all: $(OBJS)
 main.o: src/main.c
 	$(CC) -c $(CCFLAGS) src/main.c $(GTKLIB) -o main.o
 
+renderer.o: src/renderer.c
+	$(CC) -c $(CCFLAGS) src/renderer.c $(GTKLIB) -o renderer.o
+	
 arvore.o: src/arvore.c
 	$(CC) -c $(CCFLAGS) src/arvore.c $(GTKLIB) -o arvore.o
     
