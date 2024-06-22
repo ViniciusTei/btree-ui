@@ -1,14 +1,14 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
-#define M 8
+#define M 2
 #define MM  (M * 2)
 #define FALSE 0
 #define TRUE  1
 
 typedef struct{
-	char nome[13];
-	long int cpf;
+  char nome[13];
+  char cpf[12];
 }TipoChave;
 
 typedef struct TipoRegistro {
@@ -17,7 +17,7 @@ typedef struct TipoRegistro {
 
 typedef struct TipoPagina* TipoApontador;
 typedef struct TipoPagina {
-  short n;
+  int n;
   TipoRegistro r[MM];
   TipoApontador p[MM + 1];
 } TipoPagina;

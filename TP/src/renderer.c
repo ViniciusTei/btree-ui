@@ -49,7 +49,7 @@ void on_btnSearch_clicked(GtkButton *btnSearch, gpointer *data)
 
 	/* Faz a conversao da string para inteiro e retira a chave */
 	strcpy(x.Chave.nome, "xxxxxxxx");
-	x.Chave.cpf = StringToInt(strInt);
+	strcpy(x.Chave.cpf, strInt);
 
 	if(Pesquisa(&x, Dicionario, &compPes) == 1)
 		gtk_label_set_text(GTK_LABEL(lblAchado), "Registro encontrado!");
@@ -109,7 +109,7 @@ void on_btnRetirar_clicked(GtkButton *btnRetira, gpointer *data)
 
 	/* Faz a conversao da string para inteiro e retira a chave */
 	strcpy(x.Chave.nome, "xxxxxxxx");
-	x.Chave.cpf = StringToInt(strInt);
+	strcpy(x.Chave.cpf, strInt);
 
 	Retira(x.Chave, &Dicionario, &compRem);
 	numReg--;
@@ -172,7 +172,7 @@ void on_btnSubmeter_clicked(GtkButton *btnSubmeter, gpointer *data)
 	strcpy(strInt, strCpf);
 
 	strcpy(x.Chave.nome, strNome);
-	x.Chave.cpf = StringToInt(strInt);
+	strcpy(x.Chave.cpf, strInt);
 	Insere(x, &Dicionario, &compIns);
 	numReg++;
 
@@ -255,7 +255,7 @@ void on_btnReg_clicked(GtkButton *btnReg, gpointer *data)
 	}
 	else{
 		/* Cria o dicionario */
-		while(fscanf(aqrReg, "%s %ld", x.Chave.nome, &x.Chave.cpf) != EOF) 
+		while(fscanf(aqrReg, "%s %s", x.Chave.nome, x.Chave.cpf) != EOF) 
 		{ 
 			Insere(x, &Dicionario, &compIns);
 			numReg++;

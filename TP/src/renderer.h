@@ -38,5 +38,5 @@ void on_btnInsere_clicked(GtkButton *btnInsere, gpointer *data);
 void on_btnReg_clicked(GtkButton *btnReg, gpointer *data);
 
 
-void render();
+void render(int argc, char *argv[]);
 

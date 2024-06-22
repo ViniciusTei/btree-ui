@@ -376,3 +376,15 @@ int StringToInt(char *num)
 
   return dec;
 }
+
+
+void Imprime(TipoApontador p) {
+  if (p == NULL) {
+    return;
+  }
+
+  for (int i = 0; i < p->n; i++) {
+    Imprime(p->p[i]);
+    printf("%s - %s", p->r[i].Chave.nome, p->r[i].Chave.cpf);
+  }
+}
