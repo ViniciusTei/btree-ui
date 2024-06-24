@@ -5,13 +5,16 @@
 #include <stdio.h>
 #include <string.h>
 
+#define ARRAY_CAPACITY 200
+
 typedef struct Node {
   void *item;
 } Node;
 
 typedef struct ArrayList {
   Node *array;
-  int first, last;
+  int size;
+  int count;
 } ArrayList;
 
 //initialize empty
