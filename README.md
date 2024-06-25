@@ -2,6 +2,8 @@
 
 Welcome to the **B-Tree Visualization** project! This project is a C-based application that visualizes B-trees using the Raylib graphics library for the user interface. This tool aims to provide an educational resource for understanding B-trees, their structure, and their traversal.
 
+![Demo](./.github/demo.png)
+
 ## Table of Contents
 
 - [Introduction](#introduction)
