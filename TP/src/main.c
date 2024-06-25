@@ -146,8 +146,8 @@ void DrawTree(App app) {
       tmp = app.renderLevels[i].pages[j];
       DrawRectangle(placeX, placeY, tmp.width, tmp.height, DARKGRAY);
 
-      //TODO: draw text in the center of the rectangle
-      DrawText(tmp.text, placeX, placeY, FONT_NORMAL, LIGHTGRAY);
+      Vector2 text = MeasureTextEx(app.font, tmp.text, FONT_NORMAL, 10);
+      DrawText(tmp.text, placeX + 10,placeY + (int)(tmp.height/2) - (int)(text.y/2), FONT_NORMAL, LIGHTGRAY);
 
       //TODO: FIX
       //draw a line to the parent
