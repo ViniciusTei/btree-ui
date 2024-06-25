@@ -2,6 +2,11 @@
 #define TEXTINPUT
 
 #include "raylib.h"
+
+/*
+ * This code is directly copyied from the Raylib examples
+ * https://www.raylib.com/examples/text/loader.html?name=text_input_box
+ */
 #define MAX_INPUT_CHARS 10
 
 typedef struct {
