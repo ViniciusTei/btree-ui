@@ -39,7 +39,7 @@ pkg_check_modules(GTK REQUIRED gtk+-3.0)
 include_directories(${GTK_INCLUDE_DIRS})
 
 # Add source files
-set(SOURCE_FILES src/main.c src/arvore.c src/renderer.c)
+set(SOURCE_FILES src/main.c src/arvore.c src/textinput.c)
 
 # Add executable target
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})

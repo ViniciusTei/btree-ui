@@ -1,5 +1,6 @@
 #include "raylib.h"
-#include "renderer.h"
+#include "arvore.h"
+#include "textinput.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +14,8 @@
 #define REC_PAD 8
 #define FONT_NORMAL 10
 #define FONT_NORMAL_SPACING 2
+
+
 
 typedef struct Register {
   int width;
@@ -235,8 +238,13 @@ int main(int argc, char *argv[]) {
   FILE *arqReg;
   TipoRegistro x;
   int compIns = 10;
+  TextInput input, search, delete;
 
   InitializeApp(&p);
+  
+  CreateTextInput(&input, 10, 400, "Insert");
+  CreateTextInput(&search, 120, 400, "Search");
+  CreateTextInput(&delete, 230, 400, "Delete");
 
   arqReg = fopen("../teste.txt", "r+");
 
@@ -250,12 +258,12 @@ int main(int argc, char *argv[]) {
   }
 
   if (debug_flag) {
-    printf("B-Tree\n");
+    printf("B-Tree in order\n");
     Imprime(p.dict);
     printf("\nEnd of B-Tree\n");
   }
 
-  InitWindow(SCREEN_W, SCREEN_H, "B-Tree");
+  InitWindow(SCREEN_W, SCREEN_H, "B-Tree Visualization");
 
   // NOTE: Textures MUST be loaded after Window initialization (OpenGL context
   // is required)
@@ -266,16 +274,27 @@ int main(int argc, char *argv[]) {
   while (!WindowShouldClose()) {
     // UPDATE
     TraverseAndStorePageInfo(&p, p.dict, 0, rootParent);
+    UpdateTextInput(&input);
+    UpdateTextInput(&search);
+    UpdateTextInput(&delete);
     BeginDrawing();
     //RENDER
     ClearBackground(RAYWHITE);
     RenderBtree(p);
+
+    // footer with controll inputs
+    DrawLine(0, 370, SCREEN_W, 370, DARKGRAY);
+    RenderTextInput(&input);
+    RenderTextInput(&search);
+    RenderTextInput(&delete);
     //RESET
     EndDrawing();
     ResetRenderLevels(&p);
   }
 
   UnloadFont(p.font);
+  ResetRenderLevels(&p);
+  CloseWindow();
 
   return 0;
 }
