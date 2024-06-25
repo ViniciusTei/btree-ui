@@ -1,10 +1,10 @@
-#include "arraylist.h"
 #include "raylib.h"
 #include "renderer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#define ARRAY_CAPACITY 200
 #define SCREEN_TOP 20
 #define REC_HEIGHT 30
 #define FONT_NORMAL 20
