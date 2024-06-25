@@ -9,8 +9,11 @@
 #define SCREEN_W 800
 #define SCREEN_H 450
 #define SCREEN_TOP 20
-#define REC_HEIGHT 30
-#define FONT_NORMAL 20
+#define REC_HEIGHT 22
+#define REC_MARGIN 20
+#define REC_PAD 4
+#define FONT_NORMAL 10
+#define FONT_NORMAL_SPACING 2
 
 typedef struct Register {
   int width;
@@ -65,7 +68,7 @@ int MeasurePageText(App *pa, TipoApontador p) {
   int recSize = 0;
   for (int i = 0; i < p->n; i++) {
     int textSize =
-        MeasureTextEx(pa->font, p->r[i].Chave.nome, FONT_NORMAL, 10).x;
+        MeasureTextEx(pa->font, p->r[i].Chave.nome, FONT_NORMAL, FONT_NORMAL_SPACING).x;
     recSize = textSize + recSize;
   }
   return recSize;
@@ -142,14 +145,14 @@ void DrawTree(App app) {
     // calculating the level initial pos
     int halfPageSize = MeasureLevel(app.renderLevels[i]) / 2;
     placeX = (SCREEN_W * 0.5) - halfPageSize;
-    placeY = 0 + (i * (REC_HEIGHT + 20));
+    placeY = SCREEN_TOP + (i * (REC_HEIGHT + REC_MARGIN));
 
     for (int j = 0; j < app.renderLevels[i].countPages; j++) {
       tmp = app.renderLevels[i].pages[j];
       DrawRectangle(placeX, placeY, tmp.width, tmp.height, DARKGRAY);
 
-      Vector2 text = MeasureTextEx(app.font, tmp.text, FONT_NORMAL, 10);
-      DrawText(tmp.text, placeX + 10,
+      Vector2 text = MeasureTextEx(app.font, tmp.text, FONT_NORMAL, FONT_NORMAL_SPACING);
+      DrawText(tmp.text, placeX + REC_PAD,
                placeY + (int)(tmp.height / 2) - (int)(text.y / 2), FONT_NORMAL,
                LIGHTGRAY);
 
@@ -158,7 +161,7 @@ void DrawTree(App app) {
       if (i > 0) {
         // calculating the parent pos
         int parentX = (SCREEN_W * 0.5);
-        int parentY = REC_HEIGHT + ((i - 1) * (REC_HEIGHT + 20));
+        int parentY = SCREEN_TOP + REC_HEIGHT + ((i - 1) * (REC_HEIGHT + REC_MARGIN));
         DrawLine(placeX, placeY, parentX, parentY, DARKGRAY);
       }
 
