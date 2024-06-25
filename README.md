@@ -19,9 +19,9 @@ When using the application, you can begin visualizing and interacting with your 
 
 ## Features
 
-- **Graphical Visualization**: See your B-tree in a graphical format.
-- **User Interface**: Manage and interact with your B-tree through a user interface.
-- **Traversal Display**: Walk through the B-tree and view each page, along with its parent-child relationships.
+- [x] **Graphical Visualization**: See your B-tree in a graphical format.
+- [ ] **User Interface**: Manage and interact with your B-tree through a user interface.
+- [ ] **Traversal Display**: Walk through the B-tree and view each page, along with its parent-child relationships.
 
 ## Installation
 
