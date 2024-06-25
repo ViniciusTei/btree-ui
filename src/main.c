@@ -57,6 +57,26 @@ void InitializeApp(App *p) {
   p->countRenderLevels = 0;
 }
 
+void ResetRenderLevels(App *app) {
+  // Iterate through each level
+  for (int i = 0; i < app->countRenderLevels; i++) {
+    Levels *level = &app->renderLevels[i];
+
+    // Free the memory allocated for each page text
+    for (int j = 0; j < level->countPages; j++) {
+      free(level->pages[j].text);
+      level->pages[j].text = NULL;
+    }
+
+    // Reset the count of pages in the level
+    level->countPages = 0;
+    level->level = 0;
+  }
+
+  // Reset the total count of render levels
+  app->countRenderLevels = 0;
+}
+
 int FindRenderLevelIndex(App p, int level) {
   int existis = -1;
   for (int i = 0; i < p.countRenderLevels; i++) {
@@ -87,7 +107,8 @@ Register *atRegisterArray(Register **arr, int level) {
   return arr[level];
 }
 
-void TraverseAndStorePageInfo(App *pa, TipoApontador p, int nivel, ParentIdx parent) {
+void TraverseAndStorePageInfo(App *pa, TipoApontador p, int nivel,
+                              ParentIdx parent) {
   if (p == NULL) {
     return;
   }
@@ -240,31 +261,18 @@ int main(int argc, char *argv[]) {
   // is required)
   p.font = LoadFont("../raylib/examples/text/resources/pixantiqua.png");
   ParentIdx rootParent = {-1, -1};
-  TraverseAndStorePageInfo(&p, p.dict, 0, rootParent);
   SetTargetFPS(60);
 
-  if (debug_flag) {
-    printf("Render array = {count: %d}\n", p.countRenderLevels);
-    for (int i = 0; i < p.countRenderLevels; i++) {
-      for (int j = 0; j < p.renderLevels[i].countPages; j++) {
-        if (p.renderLevels[i].pages[j].text != NULL) {
-          Register reg = p.renderLevels[i].pages[j];
-          printf("array[%d][%d] = {text: %s, width: %d}\n", i, j, reg.text,
-                 reg.width);
-        } else {
-          printf("array[%d][%d] = {text: NULL}\n", i, j);
-        }
-      }
-    }
-  }
-
   while (!WindowShouldClose()) {
+    // UPDATE
+    TraverseAndStorePageInfo(&p, p.dict, 0, rootParent);
     BeginDrawing();
-
+    //RENDER
     ClearBackground(RAYWHITE);
     RenderBtree(p);
-
+    //RESET
     EndDrawing();
+    ResetRenderLevels(&p);
   }
 
   UnloadFont(p.font);
