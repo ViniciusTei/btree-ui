@@ -1,4 +1,3 @@
-#include "pango/pango-version-macros.h"
 #include "raylib.h"
 #include "renderer.h"
 #include <stdio.h>
@@ -11,7 +10,7 @@
 #define SCREEN_TOP 20
 #define REC_HEIGHT 22
 #define REC_MARGIN 20
-#define REC_PAD 4
+#define REC_PAD 8
 #define FONT_NORMAL 10
 #define FONT_NORMAL_SPACING 2
 
@@ -21,7 +20,7 @@ typedef struct Register {
   char *text;
 } Register;
 
-void InitRegister(Register *newReg, int w, int h, char *c) {
+void CreateRegister(Register *newReg, int w, int h, char *c) {
   newReg->width = w;
   newReg->height = h;
   newReg->text = malloc(strlen(c) + 1);
@@ -53,12 +52,12 @@ typedef struct App {
   int countRenderLevels;
 } App;
 
-void InitializePane(App *p) {
+void InitializeApp(App *p) {
   Inicializa(&p->dict);
   p->countRenderLevels = 0;
 }
 
-int indexOfLevel(App p, int level) {
+int FindRenderLevelIndex(App p, int level) {
   int existis = -1;
   for (int i = 0; i < p.countRenderLevels; i++) {
     if (level == p.renderLevels[i].level) {
@@ -69,7 +68,7 @@ int indexOfLevel(App p, int level) {
   return existis;
 }
 
-int MeasurePageText(App *pa, TipoApontador p) {
+int CalculatePageTextWidth(App *pa, TipoApontador p) {
   int recSize = 0;
   for (int i = 0; i < p->n; i++) {
     int textSize = MeasureTextEx(pa->font, p->r[i].Chave.nome, FONT_NORMAL,
@@ -88,12 +87,12 @@ Register *atRegisterArray(Register **arr, int level) {
   return arr[level];
 }
 
-void CalculatePageSizes(App *pa, TipoApontador p, int nivel, ParentIdx parent) {
+void TraverseAndStorePageInfo(App *pa, TipoApontador p, int nivel, ParentIdx parent) {
   if (p == NULL) {
     return;
   }
 
-  int recSize = MeasurePageText(pa, p);
+  int recSize = CalculatePageTextWidth(pa, p);
   char *pageValues = malloc(sizeof(char) * recSize);
   pageValues[0] = '\0';
 
@@ -108,9 +107,9 @@ void CalculatePageSizes(App *pa, TipoApontador p, int nivel, ParentIdx parent) {
   }
 
   Register newReg;
-  InitRegister(&newReg, recSize, REC_HEIGHT, pageValues);
+  CreateRegister(&newReg, recSize + (REC_PAD * 2), REC_HEIGHT, pageValues);
 
-  int item = indexOfLevel(*pa, nivel);
+  int item = FindRenderLevelIndex(*pa, nivel);
 
   // ainda nao existe rapaz
   if (item == -1) {
@@ -125,10 +124,10 @@ void CalculatePageSizes(App *pa, TipoApontador p, int nivel, ParentIdx parent) {
 
   ParentIdx newParentIdx = {item, pa->renderLevels[item].countPages - 1};
   for (int i = 0; i < p->n; i++) {
-    CalculatePageSizes(pa, p->p[i], nivel + 1, newParentIdx);
+    TraverseAndStorePageInfo(pa, p->p[i], nivel + 1, newParentIdx);
   }
 
-  CalculatePageSizes(pa, p->p[p->n], nivel + 1, newParentIdx);
+  TraverseAndStorePageInfo(pa, p->p[p->n], nivel + 1, newParentIdx);
 }
 
 int MeasureLevel(Levels p) {
@@ -141,7 +140,7 @@ int MeasureLevel(Levels p) {
   return size;
 }
 
-void DrawTree(App app) {
+void RenderBtree(App app) {
   int placeX, placeY;
   Register tmp;
 
@@ -154,13 +153,14 @@ void DrawTree(App app) {
 
     for (int j = 0; j < app.renderLevels[i].countPages; j++) {
       tmp = app.renderLevels[i].pages[j];
-      DrawRectangle(placeX, placeY, tmp.width, tmp.height, DARKGRAY);
+      DrawRectangle(placeX, placeY, tmp.width, tmp.height, GRAY);
+      DrawRectangleLines(placeX, placeY, tmp.width, tmp.height, DARKGRAY);
 
       Vector2 text =
           MeasureTextEx(app.font, tmp.text, FONT_NORMAL, FONT_NORMAL_SPACING);
       DrawText(tmp.text, placeX + REC_PAD,
                placeY + (int)(tmp.height / 2) - (int)(text.y / 2), FONT_NORMAL,
-               LIGHTGRAY);
+               BLACK);
 
       if (i > 0) {
         ParentIdx parent = app.renderLevels[i].parents[j];
@@ -215,7 +215,7 @@ int main(int argc, char *argv[]) {
   TipoRegistro x;
   int compIns = 10;
 
-  InitializePane(&p);
+  InitializeApp(&p);
 
   arqReg = fopen("../teste.txt", "r+");
 
@@ -240,7 +240,7 @@ int main(int argc, char *argv[]) {
   // is required)
   p.font = LoadFont("../raylib/examples/text/resources/pixantiqua.png");
   ParentIdx rootParent = {-1, -1};
-  CalculatePageSizes(&p, p.dict, 0, rootParent);
+  TraverseAndStorePageInfo(&p, p.dict, 0, rootParent);
   SetTargetFPS(60);
 
   if (debug_flag) {
@@ -262,7 +262,7 @@ int main(int argc, char *argv[]) {
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
-    DrawTree(p);
+    RenderBtree(p);
 
     EndDrawing();
   }
