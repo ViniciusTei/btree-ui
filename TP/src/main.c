@@ -119,6 +119,8 @@ void CalculatePageSizes(App *pa, TipoApontador p, int nivel) {
   for (int i = 0; i < p->n; i++) {
     CalculatePageSizes(pa, p->p[i], nivel + 1);
   }
+
+  CalculatePageSizes(pa, p->p[p->n], nivel + 1);
 }
 
 int MeasureLevel(Levels p) {
@@ -183,14 +185,14 @@ int main(int argc, char *argv[]) {
       print_usage("./bin/app");
     }
     if (strcmp(argv[i], "--file") == 0) {
-      fromFile = malloc(sizeof(argv[i+1]+1));
-      strcpy(fromFile, argv[i+1]);
+      fromFile = malloc(sizeof(argv[i + 1] + 1));
+      strcpy(fromFile, argv[i + 1]);
     }
   }
 
   if (fromFile == NULL) {
-      fromFile = malloc(sizeof(char)*21);
-      strcpy(fromFile, "../teste.txt\0");
+    fromFile = malloc(sizeof(char) * 21);
+    strcpy(fromFile, "../teste.txt\0");
   }
 
   App p;
@@ -212,6 +214,12 @@ int main(int argc, char *argv[]) {
     Insere(x, &p.dict, &compIns);
   }
 
+  if (debug_flag) {
+    printf("B-Tree\n");
+    Imprime(p.dict);
+    printf("\nEnd of B-Tree\n");
+  }
+
   InitWindow(SCREEN_W, SCREEN_H, "B-Tree");
 
   // NOTE: Textures MUST be loaded after Window initialization (OpenGL context
@@ -221,7 +229,7 @@ int main(int argc, char *argv[]) {
   SetTargetFPS(60);
 
   if (debug_flag) {
-    printf("array = {count: %d}\n", p.countRenderLevels);
+    printf("Render array = {count: %d}\n", p.countRenderLevels);
     for (int i = 0; i < p.countRenderLevels; i++) {
       for (int j = 0; j < p.renderLevels[i].countPages; j++) {
         if (p.renderLevels[i].pages[j].text != NULL) {

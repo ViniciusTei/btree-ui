@@ -389,4 +389,5 @@ void Imprime(TipoApontador p) {
   }
 
   printf("\n");
+  Imprime(p->p[p->n]);
 }
