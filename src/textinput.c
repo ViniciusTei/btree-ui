@@ -1,6 +1,7 @@
 #include "textinput.h"
 #include "raylib.h"
 #include "string.h"
+#include <stdio.h>
 
 void CreateTextInput(TextInput *t, int x, int y, char *label) {
   strcpy(t->value, "\0");
@@ -14,7 +15,7 @@ void CreateTextInput(TextInput *t, int x, int y, char *label) {
   t->button = (Rectangle){x + 82, y, 18, 15};
 }
 
-void UpdateTextInput(TextInput *t) {
+void UpdateTextInput(TextInput *t, void(*cb_click)(char*)) {
   if (CheckCollisionPointRec(GetMousePosition(), t->textBox))
     t->mouseOnText = true;
   else
@@ -55,6 +56,15 @@ void UpdateTextInput(TextInput *t) {
     SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 
   t->mouseOnText ? t->framesCounter++ : (t->framesCounter = 0);
+
+  if (t->mouseOnButton) {
+    if (IsMouseButtonPressed(0) && t->letterCount > 2) {
+      printf("Clicked! Insert: %s\n", t->value);
+      if (cb_click != NULL) {
+        (*cb_click)(t->value);
+      }
+    }
+  }
 }
 
 void RenderTextInput(TextInput *t) {

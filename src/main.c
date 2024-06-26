@@ -17,6 +17,8 @@
 #define FONT_NORMAL 10
 #define FONT_NORMAL_SPACING 2
 
+int compIns = 10;
+
 typedef struct Register {
   int width;
   int height;
@@ -54,6 +56,8 @@ typedef struct App {
   Levels renderLevels[ARRAY_CAPACITY];
   int countRenderLevels;
 } App;
+
+App p;
 
 void InitializeApp(App *p) {
   Inicializa(&p->dict);
@@ -214,6 +218,24 @@ void print_usage(const char *prog_name) {
   exit(EXIT_SUCCESS);
 }
 
+void cb_click_insert(char *value) {
+  TipoRegistro new;
+  strcpy(new.Chave.nome, value);
+  Insere(new, &p.dict, &compIns);
+}
+
+void cb_click_search(char *value) {
+  TipoRegistro new;
+  strcpy(new.Chave.nome, value);
+  Pesquisa(&new, p.dict, &compIns);
+}
+
+void cb_click_delete(char *value) {
+  TipoRegistro new;
+  strcpy(new.Chave.nome, value);
+  Retira(new.Chave, &p.dict, &compIns);
+}
+
 int main(int argc, char *argv[]) {
   int debug_flag = 0;
   char *fromFile;
@@ -237,10 +259,8 @@ int main(int argc, char *argv[]) {
     strcpy(fromFile, "../teste.txt\0");
   }
 
-  App p;
   FILE *arqReg;
   TipoRegistro x;
-  int compIns = 10;
   TextInput input, search, delete;
 
   InitializeApp(&p);
@@ -306,11 +326,16 @@ int main(int argc, char *argv[]) {
       camera.rotation -= 10;
     }
 
-    TraverseAndStorePageInfo(&p, p.dict, 0, rootParent);
+    UpdateTextInput(&input, cb_click_insert);
+    UpdateTextInput(&search, cb_click_search);
+    UpdateTextInput(&delete, cb_click_delete);
+
+    if (strlen(x.Chave.nome) > 0) {
+      Insere(x, &p.dict, &compIns);
+      strcpy(x.Chave.nome, "");
+    }
     
-    UpdateTextInput(&input);
-    UpdateTextInput(&search);
-    UpdateTextInput(&delete);
+    TraverseAndStorePageInfo(&p, p.dict, 0, rootParent);
 
     BeginDrawing();
     //CAMERA

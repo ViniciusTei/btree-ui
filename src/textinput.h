@@ -23,7 +23,7 @@ typedef struct {
 } TextInput;
 
 void CreateTextInput(TextInput *t, int x, int y, char *label);
-void UpdateTextInput(TextInput *t);
+void UpdateTextInput(TextInput *t, void (*cb_click)(char*));
 void RenderTextInput(TextInput *t);
 void ResetTextInput(TextInput *t);
 
