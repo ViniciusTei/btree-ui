@@ -1,5 +1,7 @@
-#include "raylib.h"
 #include "arvore.h"
+#include "raylib.h"
+#include "rlgl.h"
+#include "raymath.h"
 #include "textinput.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,8 +16,6 @@
 #define REC_PAD 8
 #define FONT_NORMAL 10
 #define FONT_NORMAL_SPACING 2
-
-
 
 typedef struct Register {
   int width;
@@ -171,20 +171,28 @@ void RenderBtree(App app) {
   for (int i = 0; i < app.countRenderLevels; i++) {
 
     // calculating the level initial pos
-    int halfPageSize = MeasureLevel(app.renderLevels[i]) / 2;
+    float scale = 1.0f;
+    int fullPageSize = MeasureLevel(app.renderLevels[i]);
+    if (fullPageSize > SCREEN_W) {
+      scale = 0.5;
+    }
+
+    int halfPageSize = fullPageSize / 2;
     placeX = (SCREEN_W * 0.5) - halfPageSize;
     placeY = SCREEN_TOP + (i * (REC_HEIGHT + REC_MARGIN));
 
     for (int j = 0; j < app.renderLevels[i].countPages; j++) {
       tmp = app.renderLevels[i].pages[j];
-      DrawRectangle(placeX, placeY, tmp.width, tmp.height, GRAY);
-      DrawRectangleLines(placeX, placeY, tmp.width, tmp.height, DARKGRAY);
+      DrawRectangle(placeX, placeY, (int)(tmp.width * scale),
+                    (int)(tmp.height * scale), GRAY);
+      DrawRectangleLines(placeX, placeY, (int)(tmp.width * scale),
+                         (int)(tmp.height * scale), DARKGRAY);
 
       Vector2 text =
           MeasureTextEx(app.font, tmp.text, FONT_NORMAL, FONT_NORMAL_SPACING);
       DrawText(tmp.text, placeX + REC_PAD,
-               placeY + (int)(tmp.height / 2) - (int)(text.y / 2), FONT_NORMAL,
-               BLACK);
+               placeY + (int)((tmp.height * scale) / 2) - (int)(text.y / 2),
+               FONT_NORMAL, BLACK);
 
       if (i > 0) {
         ParentIdx parent = app.renderLevels[i].parents[j];
@@ -192,16 +200,16 @@ void RenderBtree(App app) {
         int parentX = (SCREEN_W * 0.5) -
                       (int)(MeasureLevel(app.renderLevels[parent.x]) / 2);
         for (int k = 0; k < parent.y; k++) {
-          parentX += app.renderLevels[parent.x].pages[k].width + 10;
+          parentX += (app.renderLevels[parent.x].pages[k].width * scale) + 10;
         }
         int parentY = SCREEN_TOP + ((i - 1) * (REC_HEIGHT + REC_MARGIN));
-        DrawLine(placeX + (tmp.width / 2), placeY,
+        DrawLine(placeX + (tmp.width * scale / 2), placeY,
                  parentX +
                      (app.renderLevels[parent.x].pages[parent.y].width / 2),
                  parentY + REC_HEIGHT, DARKGRAY);
       }
 
-      placeX = placeX + tmp.width + 10;
+      placeX = placeX + tmp.width * scale + 10;
     }
   }
 }
@@ -241,7 +249,7 @@ int main(int argc, char *argv[]) {
   TextInput input, search, delete;
 
   InitializeApp(&p);
-  
+
   CreateTextInput(&input, 10, 400, "Insert");
   CreateTextInput(&search, 120, 400, "Search");
   CreateTextInput(&delete, 230, 400, "Delete");
@@ -265,6 +273,14 @@ int main(int argc, char *argv[]) {
 
   InitWindow(SCREEN_W, SCREEN_H, "B-Tree Visualization");
 
+  // setup camera
+  Camera2D camera = { 0 };
+  camera.target = (Vector2){ SCREEN_W*0.5, SCREEN_H*0.5 };
+  camera.offset = (Vector2){ SCREEN_W/2.0f, SCREEN_H/2.0f };
+  camera.rotation = 0.0f;
+  camera.zoom = 1.0f;
+  Vector2 prevMousePos = GetMousePosition();
+
   // NOTE: Textures MUST be loaded after Window initialization (OpenGL context
   // is required)
   p.font = LoadFont("../raylib/examples/text/resources/pixantiqua.png");
@@ -272,22 +288,50 @@ int main(int argc, char *argv[]) {
   SetTargetFPS(60);
 
   while (!WindowShouldClose()) {
+
     // UPDATE
+    float mouseDelta = GetMouseWheelMove(); 
+    float newZoom = camera.zoom + mouseDelta * 0.01f;
+    if (newZoom <=0) {
+      newZoom = 0.01f;
+    }
+    camera.zoom = newZoom;
+
+    Vector2 mousePos = GetMousePosition();
+    Vector2 delta = Vector2Subtract(prevMousePos, mousePos);
+    prevMousePos = mousePos;
+
+    if (IsMouseButtonDown(FALSE)) {
+      camera.target = GetScreenToWorld2D(Vector2Add(camera.offset, delta), camera);
+    }
+
+    if (IsKeyPressed(KEY_LEFT)) {
+      camera.rotation += 10;
+    } else if (IsKeyPressed(KEY_RIGHT)) {
+      camera.rotation -= 10;
+    }
+
     TraverseAndStorePageInfo(&p, p.dict, 0, rootParent);
+    
     UpdateTextInput(&input);
     UpdateTextInput(&search);
     UpdateTextInput(&delete);
-    BeginDrawing();
-    //RENDER
-    ClearBackground(RAYWHITE);
-    RenderBtree(p);
 
+    BeginDrawing();
+    //CAMERA
+    // RENDER
+    ClearBackground(RAYWHITE);
+    BeginMode2D(camera);
+    RenderBtree(p);
+    
+    EndMode2D();
+    // everything after this line wont be affected by the camera
     // footer with controll inputs
     DrawLine(0, 370, SCREEN_W, 370, DARKGRAY);
     RenderTextInput(&input);
     RenderTextInput(&search);
     RenderTextInput(&delete);
-    //RESET
+    // RESET
     EndDrawing();
     ResetRenderLevels(&p);
   }
