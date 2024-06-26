@@ -331,6 +331,13 @@ int main(int argc, char *argv[]) {
     RenderTextInput(&input);
     RenderTextInput(&search);
     RenderTextInput(&delete);
+
+    //HELP MENU
+    DrawRectangle( 10, 10, 208, 75, Fade(SKYBLUE, 0.5f));
+    DrawRectangleLines( 10, 10, 208, 75, BLUE);
+    DrawText("Use the mouse to move the canvas!", 20, 20, 10, BLACK);
+    DrawText("- Mouse left click to move", 40, 40, 10, DARKGRAY);
+    DrawText("- Mouse Wheel to Zoom in-out", 40, 60, 10, DARKGRAY);
     // RESET
     EndDrawing();
     ResetRenderLevels(&p);
