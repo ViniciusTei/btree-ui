@@ -8,7 +8,6 @@
 
 typedef struct{
   char nome[13];
-  char cpf[12];
 }TipoChave;
 
 typedef struct TipoRegistro {

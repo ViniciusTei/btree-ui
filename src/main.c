@@ -171,27 +171,22 @@ void RenderBtree(App app) {
   for (int i = 0; i < app.countRenderLevels; i++) {
 
     // calculating the level initial pos
-    float scale = 1.0f;
     int fullPageSize = MeasureLevel(app.renderLevels[i]);
-    if (fullPageSize > SCREEN_W) {
-      scale = 0.5;
-    }
-
     int halfPageSize = fullPageSize / 2;
     placeX = (SCREEN_W * 0.5) - halfPageSize;
     placeY = SCREEN_TOP + (i * (REC_HEIGHT + REC_MARGIN));
 
     for (int j = 0; j < app.renderLevels[i].countPages; j++) {
       tmp = app.renderLevels[i].pages[j];
-      DrawRectangle(placeX, placeY, (int)(tmp.width * scale),
-                    (int)(tmp.height * scale), GRAY);
-      DrawRectangleLines(placeX, placeY, (int)(tmp.width * scale),
-                         (int)(tmp.height * scale), DARKGRAY);
+      DrawRectangle(placeX, placeY, (int)(tmp.width),
+                    (int)(tmp.height), GRAY);
+      DrawRectangleLines(placeX, placeY, (int)(tmp.width),
+                         (int)(tmp.height), DARKGRAY);
 
       Vector2 text =
           MeasureTextEx(app.font, tmp.text, FONT_NORMAL, FONT_NORMAL_SPACING);
       DrawText(tmp.text, placeX + REC_PAD,
-               placeY + (int)((tmp.height * scale) / 2) - (int)(text.y / 2),
+               placeY + (int)((tmp.height) / 2) - (int)(text.y / 2),
                FONT_NORMAL, BLACK);
 
       if (i > 0) {
@@ -200,16 +195,16 @@ void RenderBtree(App app) {
         int parentX = (SCREEN_W * 0.5) -
                       (int)(MeasureLevel(app.renderLevels[parent.x]) / 2);
         for (int k = 0; k < parent.y; k++) {
-          parentX += (app.renderLevels[parent.x].pages[k].width * scale) + 10;
+          parentX += (app.renderLevels[parent.x].pages[k].width) + 10;
         }
         int parentY = SCREEN_TOP + ((i - 1) * (REC_HEIGHT + REC_MARGIN));
-        DrawLine(placeX + (tmp.width * scale / 2), placeY,
+        DrawLine(placeX + (tmp.width / 2), placeY,
                  parentX +
                      (app.renderLevels[parent.x].pages[parent.y].width / 2),
                  parentY + REC_HEIGHT, DARKGRAY);
       }
 
-      placeX = placeX + tmp.width * scale + 10;
+      placeX = placeX + tmp.width + 10;
     }
   }
 }
@@ -261,7 +256,7 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  while (fscanf(arqReg, "%s %s", x.Chave.nome, x.Chave.cpf) != EOF) {
+  while (fscanf(arqReg, "%s", x.Chave.nome) != EOF) {
     Insere(x, &p.dict, &compIns);
   }
 

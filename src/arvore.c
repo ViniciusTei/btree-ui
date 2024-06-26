@@ -28,12 +28,12 @@ int Pesquisa(TipoRegistro *x, TipoApontador Ap, int *compPes)
     return 0;
   }
   
-  while (i < Ap->n && x->Chave.cpf > Ap->r[i-1].Chave.cpf) {
+  while (i < Ap->n && x->Chave.nome > Ap->r[i-1].Chave.nome) {
     (*compPes)++;
     i++;
   }
   
-  if (x->Chave.cpf == Ap->r[i-1].Chave.cpf) 
+  if (x->Chave.nome == Ap->r[i-1].Chave.nome) 
   { 
     (*compPes)++;
     *x = Ap->r[i-1];
@@ -41,7 +41,7 @@ int Pesquisa(TipoRegistro *x, TipoApontador Ap, int *compPes)
     return 1;
   }
   
-  if (x->Chave.cpf < Ap->r[i-1].Chave.cpf) {
+  if (x->Chave.nome < Ap->r[i-1].Chave.nome) {
     (*compPes)++;
     return Pesquisa(x, Ap->p[i-1], compPes);
   }
@@ -61,7 +61,7 @@ void InsereNaPagina(TipoApontador Ap,
   while (NaoAchouPosicao) 
     { 
       (*compIns)++;
-      if (Reg.Chave.cpf >= Ap->r[k-1].Chave.cpf) 
+      if (Reg.Chave.nome >= Ap->r[k-1].Chave.nome) 
       { 
         (*compIns)++;
         NaoAchouPosicao = FALSE;
@@ -97,12 +97,12 @@ void Ins(TipoRegistro Reg, TipoApontador Ap, short *Cresceu,
     return;
   }
   
-  while (i < Ap->n && Reg.Chave.cpf > Ap->r[i-1].Chave.cpf){
+  while (i < Ap->n && Reg.Chave.nome > Ap->r[i-1].Chave.nome){
     (*compIns)++; 
     i++;
   }
   
-  if (Reg.Chave.cpf == Ap->r[i-1].Chave.cpf)
+  if (Reg.Chave.nome == Ap->r[i-1].Chave.nome)
   { 
     (*compIns)++;
     //printf(" Erro: Registro ja esta presente\n"); 
@@ -110,7 +110,7 @@ void Ins(TipoRegistro Reg, TipoApontador Ap, short *Cresceu,
     return;
   }
   
-  if (Reg.Chave.cpf < Ap->r[i-1].Chave.cpf){
+  if (Reg.Chave.nome < Ap->r[i-1].Chave.nome){
     (*compIns)++;
     i--;
   }
@@ -298,12 +298,12 @@ void Ret(TipoChave Ch, TipoApontador *Ap, short *Diminuiu, int *compRet)
   
   Pag = *Ap;
   
-  while (Ind < Pag->n && Ch.cpf > Pag->r[Ind-1].Chave.cpf){
+  while (Ind < Pag->n && Ch.nome > Pag->r[Ind-1].Chave.nome){
     (*compRet)++; 
     Ind++;
   }
   
-  if (Ch.cpf == Pag->r[Ind-1].Chave.cpf) 
+  if (Ch.nome == Pag->r[Ind-1].Chave.nome) 
   { 
     (*compRet)++;
     if (Pag->p[Ind-1] == NULL)   /* TipoPagina folha */
@@ -331,7 +331,7 @@ void Ret(TipoChave Ch, TipoApontador *Ap, short *Diminuiu, int *compRet)
     return;
   }
   
-  if (Ch.cpf > Pag->r[Ind-1].Chave.cpf) {
+  if (Ch.nome > Pag->r[Ind-1].Chave.nome) {
     (*compRet)++;
     Ind++;
   }
@@ -385,7 +385,7 @@ void Imprime(TipoApontador p) {
 
   for (int i = 0; i < p->n; i++) {
     Imprime(p->p[i]);
-    printf("%s - %s ", p->r[i].Chave.nome, p->r[i].Chave.cpf);
+    printf("%s - %s ", p->r[i].Chave.nome, p->r[i].Chave.nome);
   }
 
   printf("\n");
