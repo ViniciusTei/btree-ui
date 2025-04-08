@@ -1,7 +1,6 @@
+#include "../raylib/raylib.h"
+#include "../raylib/raymath.h"
 #include "arvore.h"
-#include "raylib.h"
-#include "rlgl.h"
-#include "raymath.h"
 #include "textinput.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -182,10 +181,9 @@ void RenderBtree(App app) {
 
     for (int j = 0; j < app.renderLevels[i].countPages; j++) {
       tmp = app.renderLevels[i].pages[j];
-      DrawRectangle(placeX, placeY, (int)(tmp.width),
-                    (int)(tmp.height), GRAY);
-      DrawRectangleLines(placeX, placeY, (int)(tmp.width),
-                         (int)(tmp.height), DARKGRAY);
+      DrawRectangle(placeX, placeY, (int)(tmp.width), (int)(tmp.height), GRAY);
+      DrawRectangleLines(placeX, placeY, (int)(tmp.width), (int)(tmp.height),
+                         DARKGRAY);
 
       Vector2 text =
           MeasureTextEx(app.font, tmp.text, FONT_NORMAL, FONT_NORMAL_SPACING);
@@ -289,9 +287,9 @@ int main(int argc, char *argv[]) {
   InitWindow(SCREEN_W, SCREEN_H, "B-Tree Visualization");
 
   // setup camera
-  Camera2D camera = { 0 };
-  camera.target = (Vector2){ SCREEN_W*0.5, SCREEN_H*0.5 };
-  camera.offset = (Vector2){ SCREEN_W/2.0f, SCREEN_H/2.0f };
+  Camera2D camera = {0};
+  camera.target = (Vector2){SCREEN_W * 0.5, SCREEN_H * 0.5};
+  camera.offset = (Vector2){SCREEN_W / 2.0f, SCREEN_H / 2.0f};
   camera.rotation = 0.0f;
   camera.zoom = 1.0f;
   Vector2 prevMousePos = GetMousePosition();
@@ -305,9 +303,9 @@ int main(int argc, char *argv[]) {
   while (!WindowShouldClose()) {
 
     // UPDATE
-    float mouseDelta = GetMouseWheelMove(); 
+    float mouseDelta = GetMouseWheelMove();
     float newZoom = camera.zoom + mouseDelta * 0.01f;
-    if (newZoom <=0) {
+    if (newZoom <= 0) {
       newZoom = 0.01f;
     }
     camera.zoom = newZoom;
@@ -317,7 +315,8 @@ int main(int argc, char *argv[]) {
     prevMousePos = mousePos;
 
     if (IsMouseButtonDown(FALSE)) {
-      camera.target = GetScreenToWorld2D(Vector2Add(camera.offset, delta), camera);
+      camera.target =
+          GetScreenToWorld2D(Vector2Add(camera.offset, delta), camera);
     }
 
     if (IsKeyPressed(KEY_LEFT)) {
@@ -334,16 +333,16 @@ int main(int argc, char *argv[]) {
       Insere(x, &p.dict, &compIns);
       strcpy(x.Chave.nome, "");
     }
-    
+
     TraverseAndStorePageInfo(&p, p.dict, 0, rootParent);
 
     BeginDrawing();
-    //CAMERA
-    // RENDER
+    // CAMERA
+    //  RENDER
     ClearBackground(RAYWHITE);
     BeginMode2D(camera);
     RenderBtree(p);
-    
+
     EndMode2D();
     // everything after this line wont be affected by the camera
     // footer with controll inputs
@@ -352,9 +351,9 @@ int main(int argc, char *argv[]) {
     RenderTextInput(&search);
     RenderTextInput(&delete);
 
-    //HELP MENU
-    DrawRectangle( 10, 10, 208, 75, Fade(SKYBLUE, 0.5f));
-    DrawRectangleLines( 10, 10, 208, 75, BLUE);
+    // HELP MENU
+    DrawRectangle(10, 10, 208, 75, Fade(SKYBLUE, 0.5f));
+    DrawRectangleLines(10, 10, 208, 75, BLUE);
     DrawText("Use the mouse to move the canvas!", 20, 20, 10, BLACK);
     DrawText("- Mouse left click to move", 40, 40, 10, DARKGRAY);
     DrawText("- Mouse Wheel to Zoom in-out", 40, 60, 10, DARKGRAY);
