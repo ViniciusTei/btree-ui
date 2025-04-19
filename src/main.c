@@ -236,8 +236,7 @@ void cb_click_delete(char *value) {
 
 int main(int argc, char *argv[]) {
   int debug_flag = 0;
-  char *fromFile;
-  fromFile = NULL;
+  char *fromFile = NULL;
 
   for (int i = 0; i < argc; i++) {
     if (strcmp(argv[i], "--debug") == 0) {
@@ -267,7 +266,7 @@ int main(int argc, char *argv[]) {
   CreateTextInput(&search, 120, 400, "Search");
   CreateTextInput(&delete, 230, 400, "Delete");
 
-  arqReg = fopen("../teste.txt", "r+");
+  arqReg = fopen(fromFile, "r+");
 
   if (arqReg == NULL) {
     perror("Error trying to open file!\n");
