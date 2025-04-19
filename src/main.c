@@ -211,7 +211,7 @@ void RenderBtree(App app) {
   }
 }
 
-void print_usage(const char *prog_name) {
+void exit_usage(const char *prog_name) {
   fprintf(stderr, "Usage: %s [--help] [--debug] [--file path]\n", prog_name);
   exit(EXIT_SUCCESS);
 }
@@ -243,7 +243,7 @@ int main(int argc, char *argv[]) {
       debug_flag = 1;
     }
     if (strcmp(argv[i], "--help") == 0) {
-      print_usage("./bin/app");
+      exit_usage(argv[0]);
     }
     if (strcmp(argv[i], "--file") == 0) {
       fromFile = malloc(sizeof(argv[i + 1] + 1));
@@ -252,8 +252,8 @@ int main(int argc, char *argv[]) {
   }
 
   if (fromFile == NULL) {
-    fromFile = malloc(sizeof(char) * 21);
-    strcpy(fromFile, "../teste.txt\0");
+    printf("Error: file not specified\n");
+    exit_usage(argv[0]);
   }
 
   FILE *arqReg;
